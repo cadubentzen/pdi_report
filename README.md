@@ -8,7 +8,7 @@ To install dependencies:
 $ make install_dependencies
 ```
 
-To build report:
+To build the report:
 ```
 $ make
 ```

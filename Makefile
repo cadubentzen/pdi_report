@@ -1,5 +1,4 @@
 all: output
-	# Run the command twice to resolve references
 	@pdflatex --output-directory=output report.tex
 	@bibtex output/report
 	@pdflatex --output-directory=output report.tex
