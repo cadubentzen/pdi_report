@@ -1,4 +1,10 @@
 \documentclass[conference,harvard,brazil,english]{sbatex}
+
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+
 \usepackage[latin1]{inputenc}
 \usepackage{ae}
 %
@@ -53,7 +59,7 @@
 
 % CABEÇALHO
 
-\title{Artigo Exemplo}
+\title{O codec de vídeo VP9}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -62,22 +68,8 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\author{João da Silva}{jsilva@silva.com}
-\address{Endereço do João e da Maria\\ Em algum lugar\\ Cidade, Estado, País}
-
-\author{Joaquim Pereira}{jpereira@pereira.org}
-\address{Endereço do Joaquim\\ Em algum lugar\\ Cidade, Estado, País}
-
-\author[1]{Maria da Silva}{maria@pereira.org}
-
-\author{Pedro Manoel}{pedro@pedro.com}
-\address{Endereço do Pedro e do Rafael\\ Em algum lugar\\ Cidade, Estado, País}
-
-\author{José Rodrigues}{jose@rodrigues}
-\address{Endereço do José\\ Em algum lugar\\ Cidade, Estado, País}
-
-\author[3]{Rafael Pires}{rafael@pires}
-
+\author{Carlos Eduardo R. B. Fonseca}{cadubentzen@gmail.com}
+\address{Universidade Federal do Rio Grande do Norte\\ Natal, RN, Brasil}
 
 \twocolumn[
 
@@ -85,625 +77,818 @@
 
 \selectlanguage{english}
 \begin{abstract}
-  O processo de revisao do CBA 2014 sera DOUBLE BLIND, portanto NAO inclua
-  autores na versão que será submetida para revisão. Leve isso em consideração ao citar seus próprios trabalhos.  \end{abstract}
+  VP9 is a video codec developed by Google and now widely deployed in streaming content providers such as Youtube. It is an open-source project with an open specification, aiming for the development and use of free video codecs in contrast with current patented codecs. This report explains in a high-level point of view what techniques are used in Google's VP9 codec, for a project in the course of Digital Image Processing.
+\end{abstract}
 
-\keywords{Template, Example.}
+\keywords{Video, Codec, VP9, Image, Compression}
 
 \selectlanguage{brazil}
 \begin{abstract}
-  O processo de revisao do CBA 2014 sera DOUBLE BLIND, portanto NAO inclua
-  autores na versão que será submetida para revisão. Leve isso em consideração ao citar seus próprios trabalhos.
+  O codec VP9 foi desenvolvido pela Google e agora é amplamente utilizado em serviços de streaming como o Youtube. O desenvolvimento desse codec e sua especifição foi feito de maneira open-source, com o intuito de incentvar desenvolvimento e uso de codecs livres, em constraste com os atuais codecs que são patenteados. Esse relatório explica em uma visão de alto nível quais são as técnicas utilizadas no algoritmo de compressão VP9 da Google. Esse é o projeto da disciplina de Processamento Digital de Imagens.
 \end{abstract}
 
-\keywords{Exemplo, Ilustração.}
+\keywords{Video, Codec, VP9, Imagem, Compressão}
 ]
 
 % CONTRIBUIÇÃO
 
 \selectlanguage{brazil}
 
-\section{Como utilizar o estilo \SBATeX}
-Este texto serve de guia de utilização do estilo \SBATeX para
-\LaTeXe. Com este estilo é possível gerar artigos no formato utilizado pelo \emph{Congresso
-  Brasileiro de Automática} e \emph{Simpósio Brasileiro de Automação Inteligente} na produção das versões acabadas dos artigos
-  nos anais.
+\section{Introdução}
 
+O codec VP9 foi desenvolvido pelo Google com o intuito de iniciar o movimento de codecs que são livres de royalty e com implementações open-source livres para uso comercial. Dessa forma, a indústria de multimídia se tornará de mais fácil entrada e possíveis fabricantes podem adotar esse codec sem ter de pagar para poder utilizar a tecnologia.
 
-O nome entre parênteses governa o tipo de documento a ser gerado. Este
-parâmetro deve ser passado (entre colchetes) como argumento do comando
-\verb+\documentclass+, que deve ser o primeiro comando a aparecer no
-artigo. Por exemplo, o comando
-\begin{verbatim}
-  \documentclass[conference]{sbatex}
-\end{verbatim}
-é utilizado no início deste arquivo para geração do formato final
-para o \emph{Congresso Brasileiro de Automática} e o
-\emph{Simpósio Brasileiro de Automação Inteligente}.
-
-Pode-se adicionar ao comando \verb+\documentclass+ as seguintes
-opções:
+Esse codec foi lançado em sua versão final em 2012. Desde então a Google esteve trabalhando no codec VP10, até que em 2015 houve uma junção de várias empresas para formar o grupo \textit{Alliance for Open Media} (AOM), para unir forças no desenvolvimento de um codec grátis para uso com uma alta performance de compressão, visando vídeos ultraHD. Atualmente a AOM conta com as empresas mostradas em \ref{fig:aom} \cite{aom} e o novo codec que está sendo trabalhado é chamado de AV1, que combina tecnologias de três codecs que estavam sendo trabalhados separadamente:
 \begin{itemize}
-  \item \verb+submission+: quando em combinação com a opção
-  \verb+journal+ produz uma versão adequada para proposição à
-  \emph{Revista da Sociedade Brasileira de Automática}. É ignorada se em
-  conjunto opção \verb+conference+.
-
-  \item \verb+harvard+: inclui o pacote \verb+harvard+, utilizado para
-  produção das referências bibliográficas. Pode ser usado em conjunto
-  com qualquer das outras opções. Veja seção~\ref{sec:bibliografia}.
-\end{itemize}
-Por exemplo, para propor um artigo ao congresso e utilizar o pacote de
-referências bibliográficas \verb+harvard+ usa-se o comando
-\begin{verbatim}
-  \documentclass[conference,harvard]{sbatex}
-\end{verbatim}
-A ordem dos parâmetros não é relevante.
-
-Os seguintes \emph{pacotes} \LaTeX\ estão disponíveis
-automaticamente\footnote{Isto também significa que \emph{é necessário
-ter estes pacotes instalados} para que se possa utilizar o estilo
-\SBATeX.} com o estilo \SBATeX:
-\begin{itemize}
-\item \verb+ifthen+: pacote com comandos de controle de fluxo do tipo
-`if', `then' e `else'; utilizado internamente para controle das opções de
-formatação.
-\item \verb+fancyhdr+: pacote para formatação dos cabeçalhos e rodapés.
-\item \verb+babel+: pacote para escrita em múltiplos idiomas; os
-idiomas/dialetos \verb+english+, \verb+brazil+ e \verb+spanish+ já
-estão habilitados.
-\item \verb+theorem+: pacote para controle dos ambientes \verb+theorem+,
-\verb+lemma+, \verb+corollary+ e \verb+proof+.
-\item \verb+geometry+: pacote para controle da dimensões do texto na página.
-\item \verb+latexsym+: pacote com símbolos extras do \LaTeXe.
-\end{itemize}
-A opção \verb+journal+ provê o pacote:
-\begin{itemize}
-\item \verb+times+: pacote para utilização das fontes \verb+times+.
-\end{itemize}
-A opção \verb+submission+ provê o pacote:
-\begin{itemize}
-\item \verb+setspace+: pacote para controle de espaçamento duplo entre
-linhas.
-\end{itemize}
-E a opção \verb+harvard+ provê o pacote:
-\begin{itemize}
-\item \verb+harvard+: pacote para formatação das referências
-bibliográficas.
+  \item Google's VP10
+  \item Cisco's Thor project
+  \item Xiph and Mozilla's Daala project
 \end{itemize}
 
-Não é necessário incluir explicitamente as cláusulas
-\verb+\usepackage+ correpondentes a estes pacotes no artigo para que
-se possa utilizá-los. Caso a instalação do \LaTeX\ não contenha alguns
-destes pacotes, consulte a página
-\begin{verbatim}
-  http://www.ctan.org
-\end{verbatim}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{companies}
+    \caption{Empresas envolvidas na AOM}
+    \label{fig:aom}
+\end{figure}
 
-Caso o artigo seja em português ou espanhol, recomenda-se a utilização
-dos pacotes \verb+inputenc+ e \verb+fontenc+ em conjunto com a opção
-\verb+journal+ na forma
-\begin{verbatim}
-  \usepackage[latin1]{inputenc}
-  \usepackage[T1]{fontenc}
-\end{verbatim}
-O pacote \verb+inputenc+ com a opção \verb+latin1+ permite que se
-escreva o texto com acentos (e.g. \verb+nação+), no formato
-ISO-8859-1, ao invés de se utilizar a acentuação no formato \TeX
-(e.g. \verb+na\c{c}\~{a}o+). O pacote \verb+fontenc+ com a opção
-\verb+T1+ faz com que o LaTeX hifenize melhor palavras em português ou
-espanhol.
+Como a especifição do AV1 ainda não está completa, iremos tratar do codec VP9 nesse relatório, obtida em \cite{vp9spec}. A seção 2 mostra as técnicas utilizadas nesse algoritmo. Na seção 3, é comentado sobre como as técnicas mostradas podem ser implementadas em hardware. Por fim, a seção 4 mostra possibilidades de trabalhos futuros. 
 
-Com a opção \verb+conference+, e devido à escolha de um conjunto de
-fontes diferentes, recomenda-se subsituir o pacote \verb+fontenc+ pelo
-pacote \verb+ae+ (\emph{Almost European Computer Modern}), o que pode
-ser feito com o comando
-\begin{verbatim}
-  \usepackage{ae}
-\end{verbatim}
-Neste caso não é necessário adicionar explicitamente o pacote
-\verb+fontenc+, que já é carregado automaticamente pelo pacote
-\verb+ae+. Veja também a seção~\ref{sec:esqueleto}.
+\section{Processo básico de reprodução de vídeo}
 
-Após o preâmbulo, inicia-se o texto propriamente dito por meio do
-comando
-\begin{verbatim}
-  \begin{document}
-\end{verbatim}
-O passo seguinte é a declaração do título do artigo, autores e
-afiliações.
+Durante a reprodução de um vídeo, o processo que acontece por trás do player pode ser interpretado como um pipeline \ref{fig:pipeline} que começa recebendo dados de uma fonte, que pode ser um arquivo de vídeo ou streaming de dados através da internet. Esses pacotes inicialmente estão geralmente contidos em um container que pode ter várias mídias embutidas: vídeo, canais de áudio e legendas, se for o caso. A etapa de demultiplexação separa essas mídias e as repassas, ainda codificadas, para serem decodificadas. Após elas serem decodificadas, elas são exibidas em algum canal de áudio e vídeo, como o X11 para exibição do frame no Linux e a placa de áudio do computador.
 
-\subsection{Título, autores e afiliações}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{pipeline}
+    \caption{Pipeline de reprodução de vídeo}
+    \label{fig:pipeline}
+\end{figure}
 
-O título do artigo é declarado por meio do comando \verb+\title+. Por
-exemplo, o título deste artigo foi gerado com o comado:
-\begin{verbatim}
-  \title{Artigo Exemplo}
-\end{verbatim}
-O título não deve conter agradecimentos, os quais devem aparecer em
-uma seção separada, no final do artigo.
+Os codecs são responsáveis por conter informação comprimida para que possa ser transportada através da rede com menor consumo de banda. Como mostrado em \ref{fig:pipeline} tipicamente codecs como H264 e MPEG são utilizados para áudio e vídeo, respectivamente. Porém esses codecs podem ser trocados por outros como VP9 e Opus, por exemplo, assim como mostrado em 
+\ref{fig:pipelinewebm}.
 
-Em seguida, definem-se os autores com seus endereços eletrônicos e
-afiliações por meio dos comandos \verb+\author+ e
-\verb+\address+. Por exemplo, o nome e endereço do primeiro autor
-deste artigo, João da Silva, é introduzido por meio dos comandos:
-\begin{verbatim}
-  \author{João da Silva}
-         {jsilva@silva.com}
-  \address{Endereço do João e da Maria\\
-           Em algum lugar\\
-           Cidade, Estado, País}
-\end{verbatim}
-Note-se que o comando \verb+\author+ requer dois argumentos: o nome e
-o endereço eletrônico. Quebras de linha podem ser obtidas na afiliação
-por meio do comando~\verb+\\+. Segue-se, neste exemplo, a declaração
-do nome e afiliação do segundo autor:
-\begin{verbatim}
-  \author{Joaquim Pereira}
-         {jpereira@pereira.org}
-  \address{Endereço do Joaquim\\
-           Em algum lugar\\
-           Cidade, Estado, País}
-\end{verbatim}
-
-Em geral, para cada comando \verb+\author+ deve haver um comando
-\verb+\address+ correspondente, salvo o caso de compartilhamento
-de endereços. Neste caso, omite-se o comando \verb+\address+ para
-o segundo autor e indica-se o número do endereço que se deseja
-compartilhar como um parâmetro adicional do comando
-\verb+\author+. Por exemplo, o comando:
-\begin{verbatim}
-  \author[1]{Maria da Silva}
-            {maria@pereira.org}
-\end{verbatim}
-indica que a Maria da Silva utilizará o endereço de número 1, que
-corresponde ao endereço de João da Silva.
-
-Os autores seguintes possuem endereços independentes e são
-introduzidos da maneira convencional:
-\begin{verbatim}
-  \author{Pedro Manoel}
-         {pedro@pedro.com}
-  \address{Endereço do Pedro e do Rafael\\
-           Em algum lugar\\
-           Cidade, Estado, País}
-
-  \author{José Rodrigues}
-         {jose@rodrigues}
-  \address{Endereço do José\\
-           Em algum lugar\\
-           Cidade, Estado, País}
-\end{verbatim}
-
-Finalmente, o autor Rafael é definido como
-\begin{verbatim}
-  \author[3]{Rafael Pires}
-            {rafael@pires}
-\end{verbatim}
-o que indica que Rafael compartilha o endereço de número 3 com Pedro
-Manoel. Lembre-se de que, apesar de Pedro Manoel ser o autor de número
-4, o seu endereço é o de número 3, uma vez que a Maria já compartilha
--- sem segundas intenções -- do mesmo endereço com o João.
-
-O comando
-\begin{verbatim}
-  \maketitle
-\end{verbatim}
-coloca o título e os autores no formato adequado.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{pipelinewebm}
+    \caption{Pipeline de reprodução de vídeo}
+    \label{fig:pipelinewebm}
+\end{figure}
 
 
-\subsection{Resumo, abstract e palavras-chave}
+\section{Técnicas utilizadas}
 
-Os artigos devem conter um resumo em português (ou espanhol) e em
-inglês. O ambiente para definição dos resumos, em qualquer idioma, é o
-\verb+abstract+. Para diferenciar os idiomas utiliza-se o comando
-\verb+\selectlanguage+, do pacote \verb+babel+. Por exemplo, a seqüência
-de comandos produz um \emph{Abstract} seguido de um \emph{Resumo}:
-\begin{verbatim}
-  \selectlanguage{english}
-  \begin{abstract}
-    Yossarian says, ...
-  \end{abstract}
+\subsection{Sistema de cores}
 
-  \selectlanguage{brazil}
-  \begin{abstract}
-    O Largo da Sé ...
-  \end{abstract}
-\end{verbatim}
+O primeiro ponto a se observar é o sistema de cores utilizado. Para representar imagens coloridas, tradicionalmente se usa o sistema de cores RGB, que na forma mais comum contém 8 bits por canal, resultando em 24 bits por pixel. No sistema YUV (ou YCbCr), também são utilizados três canais: um de luminância e dois de cromatância. No entanto, a luminância, ao ponto de vista do olho humano, é onde contém a maior parte da informação, permitindo que menos bits sejam utilizados nos canais de cromatância, o que é chamado de \textit{Chroma-subsampling}.
 
-As \emph{palavras-chave} devem ser definidas por meio do comando:
-\begin{verbatim}
-  \keywords{Exemplo, Ilustração}
-\end{verbatim}
+A matrix de luminância equivale à imagem em tons de cinza, enquanto as matrizes de cromatância são proporcionais à diferença dos canais RGB azul e vermelho com a matriz de luminância.
 
-Deste ponto em diante selecione o idioma a ser utilizado e
-inicie o texto da sua contribuição.
+Como mostrado em \ref{fig:yuv} \cite{yuvwiki}, por exemplo no caso do YCbCr 4:2:0, para cada 4 pixels, 4 valores de 8 bits de luminância são usados. No entanto, somente 2 valores de cromatância vermelha são utilizados e os valores de cromatância azul são os mesmos da vermelha. Dessa forma, temos:
 
-\textbf{IMPORTANTE:} Caso esteja se produzindo um texto com a
-opção \verb+conference+, colocam-se os comandos que vão de
-\verb+\maketitle+ a \verb+\keywords+ dentro de um ambiente
-\verb+twocolumn+. Isto é necessário para que os resumos sejam
-formatados em coluna simples\footnote{Como este arquivo está
-adaptado para utilizar o formato adequado para o \emph{Congresso
-Brasileiro de Automática} e o \emph{Simpósio Brasileiro de
-Automação Inteligente}, isto já está feito}. Veja
-seção~\ref{sec:esqueleto}.
+\begin{center}
+\begin{math}
+  N_{BITS} = \frac{4*8 + 2*8}{4} = 12 \text{ bits}
+\end{math}
+\end{center}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{yuv}
+    \caption{Sistema de cores YUV}
+    \label{fig:yuv}
+\end{figure}
 
-\subsection{Teoremas, lemas, corolários e provas}
+\subsection{Intra prediction}
 
-Quatro ambientes já se encontram pré-definidos no estilo \SBATeX. São
-eles
+Intra prediction consiste na predição de valores de um frame a partir de outros valores já decodificados dentro do mesmo frame. Em \ref{fig:pred_before}, podemos observar um exemplo. Suponha que a parte em verde são valores já conhecidos de pixel e os valores com ? ainda estão para serem definidos. Poderiamos assumir esses valores como em \ref{fig:pred_vert} (propagando valores verticalmente) ou com em \ref{fig:pred_diag}(propagando no sentido da diagonal). No VP9, uma flag de intra prediction diz qual o sentido que a predição deve ser feita.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{prediction_before}
+    \caption{Subframe parcialmente decodificado}
+    \label{fig:pred_before}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{prediction_vertical}
+    \caption{Predição no sentido vertical}
+    \label{fig:pred_vert}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{prediction_diagonal}
+    \caption{Predição no sentido da diagonal}
+    \label{fig:pred_diag}
+\end{figure}
+
+Supondo que o subframe original fosse como em \ref{fig:pred_orig}. Nessa configuração, predizendo verticalmente geraria um resíduo (diferença entre original e predizido) como em \ref{fig:pred_resid}. A informação que é salva pelo VP9 é justamente esse resíduo, pois esses valores tendem a ter uma ordem menor do que seria os valores dos pixels. Além disso, esses valores são armazenados de forma transformada.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{prediction_original}
+    \caption{Subframe original}
+    \label{fig:pred_orig}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{prediction_residual}
+    \caption{Resíduo da predição}
+    \label{fig:pred_resid}
+\end{figure}
+
+\subsection{Transformações utilizadas}
+
+No VP9, duas transformações são utilizadas para representar os resíduos:
+
 \begin{itemize}
-\item \verb+theorem+: ambiente para teoremas.
-\item \verb+corollary+: ambiente para corolários.
-\item \verb+lemma+: ambiente para lemas.
-\item \verb+proof+: ambiente para provas.
-\end{itemize}
-Segue-se um exemplo de utilização destes ambientes:
-\begin{lemma}[Desigualdade Subtrativa]
-Em um espaço vetorial linear normado $\|x\| - \|y\| \leq \|x - y\|$
-para quaisquer vetores $x$, $y$.
-\end{lemma}
-\begin{proof}
-\begin{align*}
-\|x\| - \|y\| &= \|x - y + y\| - \|y\| \ \\
-              &\leq \|x - y \| + \|y\| - \|y\| \\
-              &= \|x - y\|.
-\end{align*}
-\end{proof}
-Este lema é produzido pela seguinte seqüencia de comandos:
-\begin{verbatim}
-  \begin{lemma}[Desigualdade Subtrativa]
-    Em um espaço vetorial linear ...
-  \end{lemma}
-  \begin{proof}
-    ...
-  \end{proof}
-\end{verbatim}
-
-Estes ambientes, com exceção do ambiente \verb+proof+, aceitam
-um parâmetro opcional que define um nome. No exemplo acima, o nome
-\emph{Desigualdade Subtrativa} foi produzido por meio deste argumento.
-
-
-\subsection{Bibliografia}
-\label{sec:bibliografia}
-
-As referências são reunidas ao fim do manuscrito, arranjadas
-alfabeticamente pelo primeiro autor e cronologicamente para cada
-autor.
-
-\textbf{IMPORTANTE:} Todas referências citadas devem aparecer em algum
-outro ponto do texto.
-
-As citações seguem um estilo autor/ano (o mesmo
-usado na revista {\em Automatica}). O pacote \verb+harvard+ (já
-incluído pelo \SBATeX) provê vários comandos para inclusão de
-citações. Dois dois mais utilizados são o tradicional \verb+\cite+ e o
-\verb+\citeasnoun+. Veja um exemplo:
-\begin{verbatim}
-  O resumo deste artigo é um trecho do
-  livro~\citeasnoun{serafim}. Já o abstract é
-  extraído de~\citeasnoun{catch22}.
-  Informações sobre o estilo bibliográfico
-  \verb+harvard+ encontram-se
-  em~\citeasnoun{harvard}. Os interessados
-  devem consultar referências adicionais
-  sobre \LaTeX~\cite{latex,%
-  latex:guide,latex:companion}.
-\end{verbatim}
-produz o trecho:
-
-\begin{em}
-  O resumo deste artigo é um trecho do
-  livro~\citeasnoun{serafim}. Já o abstract é
-  extraído de~\citeasnoun{catch22}.
-  Informações sobre o estilo bibliográfico
-  \verb+harvard+ encontram-se
-  em~\citeasnoun{harvard}. Os interessados
-  devem consultar referências adicionais
-  sobre \LaTeX~\cite{latex,latex:guide,latex:companion}.
-\end{em}
-
-Recomenda-se a utilização o programa BibTeX para gerar as suas
-referências~\cite{latex,latex:guide,latex:companion}. Note-se que
-não é necessário definir o estilo bibliográfico com o comando
-\verb+\bibliographystyle+, pois o mesmo é definido automaticamente
-pelo estilo \SBATeX. Basta incluir o arquivo de bibliografias,
-neste exemplo o artigo \verb+exemplo.bib+ por meio do comando.
-\begin{verbatim}
-    ...
-
-    \bibliography{exemplo}
-
-  \end{document}
-\end{verbatim}
-Note-se que este comando deve ser colocado logo antes do
-encerramento do artigo, o que é feito pelo comando
-\verb+\end{document}+, de tal forma a garantir que a bibliografia
-seja o último item do artigo.
-
-
-\subsection{Esqueleto deste arquivo no formato \SBATeX}
-\label{sec:esqueleto}
-
-Este arquivo, adaptado para gerar o formato adequado para o
-\emph{Congresso Brasileiro de Automática} e o  \emph{Simpósio
-Brasileiro de Automação Inteligente}, faz uso da seguintes
-instruções:
-\begin{verbatim}
-  \documentclass[conference,harvard,brazil,english]{sbatex}
-  \usepackage[latin1]{inputenc}
-  \usepackage{ae}
-
-    ...
-
-    \twocolumn[
-      \maketitle
-
-      \selectlanguage{english}
-      \begin{abstract}
-        Yossarian says, ...
-      \end{abstract}
-
-      \selectlanguage{brazil}
-      \begin{abstract}
-        O Largo da Sé ...
-      \end{abstract}
-
-      \keywords{Exemplo, Ilustração}
-    ]
-
-    ...
-\end{verbatim}
-
-Caso a opção \verb+journal+ seja utilizada, remova o comando
-\verb+twocolumn[+ antes do comando \verb+\maketitle+ e o \verb+]+ depois do
-comando \verb+\keywords+. Nos textos em português ou espanhol substitua o pacote \verb+ae+ pelo
-pacote \verb+fontenc+ com a opção \verb+T1+. Os trechos modificado são os
-seguintes:
-\begin{verbatim}
-  \documentclass[journal,harvard,brazil,english]{sbatex}
-  \usepackage[latin1]{inputenc}
-  \usepackage[T1]{fontenc}
-
-  \begin{document}
-
-    \title{Artigo Exemplo}
-
-    \author{João da Silva}
-           {jsilva@silva.com}
-    \address{Endereço do João e da Maria\\
-             Em algum lugar\\
-             Cidade, Estado, País}
-
-    \author{Joaquim Pereira}
-           {jpereira@pereira.org}
-    \address{Endereço do Joaquim\\
-             Em algum lugar\\
-             Cidade, Estado, País}
-
-    \author[1]{Maria da Silva}
-              {maria@pereira.org}
-
-    \author{Pedro Manoel}
-           {pedro@pedro.com}
-    \address{Endereço do Pedro e do Rafael\\
-             Em algum lugar\\
-             Cidade, Estado, País}
-
-    \author{José Rodrigues}
-           {jose@rodrigues}
-    \address{Endereço do José\\
-             Em algum lugar\\
-             Cidade, Estado, País}
-
-    \author[3]{Rafael Pires}
-              {rafael@pires}
-
-    \maketitle
-
-    \selectlanguage{english}
-    \begin{abstract}
-      Yossarian says, ...
-    \end{abstract}
-
-    \selectlanguage{brazil}
-    \begin{abstract}
-      O Largo da Sé ...
-    \end{abstract}
-
-    \keywords{Exemplo, Ilustração}
-
-    ...
-
-    \bibliography{exemplo}
-
-  \end{document}
-\end{verbatim}
-
-
-\section{Como processar este arquivo sem um aplicativo LaTeX}
-
-Para processar este arquivo via linha de comandos utiliza-se a
-sequência de comandos:
-\begin{verbatim}
-  latex cba
-  bibtex cba
-  latex cba
-  latex cba
-\end{verbatim}
-Estes comandos geram um arquivo do tipo \emph{Device Independent}
-(\verb+cba.dvi+), que pode ser visualizado em programas como o
-\verb+xdvi+ ou \verb+yap+.
-
-
-Para gerar um arquivo no formato \emph{Portable Document Format}
-(\verb+cba.pdf+) utilize os comandos:
-\begin{verbatim}
-  dvips -Ppdf -t a4 cba
-  ps2pdf -dMaxSubsetPct=100 -dSubsetFonts=true
-         -dEmbedAllFonts=true -dCompatibilityLevel=1.2
-          -sPAPERSIZE=a4 cba.ps
-\end{verbatim}
-
-\textbf{Observação:} Dependendo da sua instalação do \verb+dvips+ o
-parâmetro \verb+-Ppdf+ pode acarretar a troca de algumas seqüências de
-letras nos arquivos .ps e .pdf. Um típico exemplo é a troca de toda
-sílaba `fi' pelo símbolo da libra esterlina. Para evitar este
-indesejável efeito você deve desabilitar (ou habilitar, dependendo da
-instalação) o remapeamento de caracteres. Faça isto adicionando à
-linha de comando do \verb+dvips+ o parâmetro \verb+-G0+ (ou \verb+-G+
-para habilitar).
-
-\section{Contribuição deste artigo}
-
-\subsection{Os vinte e sete erros mais comuns (de uma lista de cem)}
-\label{sec:27erros}
-
-Erros gramaticais e ortográficos devem, por princípio, ser
-evitados. Alguns, no entanto, como ocorrem com maior freqüência,
-merecem atenção redobrada. O primeiro capítulo deste manual inclui
-explicações mais completas a respeito de cada um deles. Veja os cem
-mais comuns do idioma e use esta relação como um roteiro para fugir
-deles~\cite{manual}.
-
-\begin{enumerate}
-\item ``Mal cheiro'', ``mau-humorado''. Mal opõe-se a bem e mau, a
-bom. Assim: mau cheiro (bom cheiro), mal-humorado
-(bem-humorado). Igualmente: mau humor, mal-intencionado, mau jeito,
-mal-estar.
-
-\item ``Fazem'' cinco anos. Fazer, quando exprime tempo, é impessoal:
-Faz cinco anos.~/~Fazia dois séculos.~/~Fez 15 dias.
-
-\item ``Houveram'' muitos acidentes. Haver, como existir, também é
-invariável: Houve muitos acidentes.~/~Havia muitas pessoas.~/~Deve
-haver muitos casos iguais.
-
-\item ``Existe'' muitas esperanças. Existir, bastar, faltar, restar e
-sobrar admitem normalmente o plural: Existem muitas esperanças. /
-Bastariam dois dias.~/~Faltavam poucas peças.~/~Restaram alguns
-objetos.~/~Sobravam idéias.
-
-\item Para ``mim'' fazer. Mim não faz, porque não pode ser
-sujeito. Assim: Para eu fazer, para eu dizer, para eu trazer.
-
-\item Entre ``eu'' e você. Depois de preposição, usa-se mim ou ti: Entre
-mim e você.~/~Entre eles e ti.
-
-\item ``Há'' dez anos ``atrás''. Há e atrás indicam passado na frase. Use
-apenas há dez anos ou dez anos atrás.
-
-\item ``Entrar dentro''. O certo: entrar em. Veja outras redundâncias:
-Sair fora ou para fora, elo de ligação, monopólio exclusivo, já não há
-mais, ganhar grátis, viúva do falecido.
-
-\item ``Venda à prazo''. Não existe crase antes de palavra masculina, a
-menos que esteja subentendida a palavra moda: Salto à (moda de) Luís
-XV. Nos demais casos: A salvo, a bordo, a pé, a esmo, a cavalo, a
-caráter.
-
-\item ``Porque'' você foi? Sempre que estiver clara ou implícita a
-palavra razão, use por que separado: Por que (razão) você foi?~/~Não
-sei por que (razão) ele faltou.~/~Explique por que razão você se
-atrasou. Porque é usado nas respostas: Ele se atrasou porque o
-trânsito estava congestionado.
-
-\item Vai assistir ``o'' jogo hoje. Assistir como presenciar exige a:
-Vai assistir ao jogo, à missa, à sessão.  Outros verbos com a: A
-medida não agradou (desagradou) à população.~/~Eles obedeceram
-(desobedeceram) aos avisos.~/~Aspirava ao cargo de diretor.~/~Pagou ao
-amigo.~/~Respondeu à carta.~/~Sucedeu ao pai.~/~Visava aos estudantes.
-
-\item Preferia ir ``do que'' ficar. Prefere-se sempre uma coisa a outra:
-Preferia ir a ficar. É preferível segue a mesma norma: É preferível
-lutar a morrer sem glória.
-
-\item O resultado do jogo, não o abateu. Não se separa com vírgula o
-sujeito do predicado. Assim: O resultado do jogo não o abateu. Outro
-erro: O prefeito prometeu, novas denúncias. Não existe o sinal entre o
-predicado e o complemento: O prefeito prometeu novas denúncias.
-
-\item Não há regra sem ``excessão''. O certo é exceção. Veja outras
-grafias erradas e, entre parênteses, a forma correta: ``paralizar''
-(paralisar), ``beneficiente'' (beneficente), ``xuxu'' (chuchu),
-``previlégio'' (privilégio), ``vultuoso'' (vultoso), ``cincoenta''
-(cinqüenta), ``zuar'' (zoar), ``frustado'' (frustrado), ``calcáreo''
-(calcário), ``advinhar'' (adivinhar), ``benvindo'' (bem-vindo), ``ascenção''
-(ascensão), ``pixar'' (pichar), ``impecilho'' (empecilho), ``envólucro''
-(invólucro).
-
-\item Quebrou ``o'' óculos. Concordância no plural: os óculos, meus
-óculos. Da mesma forma: Meus parabéns, meus pêsames, seus ciúmes,
-nossas férias, felizes núpcias.
-
-\item Comprei ``ele'' para você. Eu, tu, ele, nós, vós e eles não podem
-ser objeto direto. Assim: Comprei-o para você. Também: Deixe-os sair,
-mandou-nos entrar, viu-a, mandou-me.
-
-\item Nunca ``lhe'' vi. Lhe substitui a ele, a eles, a você e a vocês e
-por isso não pode ser usado com objeto direto: Nunca o vi.~/~Não o
-convidei.~/~A mulher o deixou.~/~Ela o ama.
-
-\item ``Aluga-se'' casas. O verbo concorda com o sujeito: Alugam-se
-casas.~/~Fazem-se consertos.~/~É assim que se evitam acidentes. /
-Compram-se terrenos.~/~Procuram-se empregados.
-
-\item ``Tratam-se'' de. O verbo seguido de preposição não varia nesses
-casos: Trata-se dos melhores profissionais.~/~Precisa-se de
-empregados.~/~Apela-se para todos.~/~Conta-se com os amigos.
-
-\item Chegou ``em'' São Paulo. Verbos de movimento exigem a, e não em:
-Chegou a São Paulo.~/~Vai amanhã ao cinema.~/~Levou os filhos ao
-circo.
-
-\item Atraso implicará ``em'' punição. Implicar é direto no sentido de
-acarretar, pressupor: Atraso implicará punição.~/~Promoção implica
-responsabilidade.
-
-\item Vive ``às custas'' do pai. O certo: Vive à custa do pai. Use
-também em via de, e não ``em vias de'': Espécie em via de extinção. /
-Trabalho em via de conclusão.
-
-\item Todos somos ``cidadões''. O plural de cidadão é cidadãos. Veja
-outros: caracteres (de caráter), juniores, seniores, escrivães,
-tabeliães, gângsteres.
-
-\item O ingresso é ``gratuíto''. A pronúncia correta é gratúito, assim
-como circúito, intúito e fortúito (o acento não existe e só indica a
-letra tônica). Da mesma forma: flúido, condôr, recórde, aváro, ibéro,
-pólipo.
-
-\item A última ``seção'' de cinema. Seção significa divisão, repartição,
-e sessão equivale a tempo de uma reunião, função: Seção Eleitoral,
-Seção de Esportes, seção de brinquedos; sessão de cinema, sessão de
-pancadas, sessão do Congresso.
-
-\item Vendeu ``uma'' grama de ouro. Grama, peso, é palavra masculina: um
-grama de ouro, vitamina C de dois gramas. Femininas, por exemplo, são
-a agravante, a atenuante, a alface, a cal, etc.
-
-\item ``Porisso''. Duas palavras, por isso, como de repente e a partir
-de.
-
-\end{enumerate}
-
-\subsection{Observação importante}
-
-Os erros de português porventura presentes neste artigo
-\begin{itemize}
-\item ou foram introduzidos propositalmente para deleite dos leitores
-atentos,
-\item ou não constam da lista da seção~\ref{sec:27erros}.
+  \item Transformada Discreta dos Cossenos
+  \item Transformada Discreta Assíncrona dos Senos
 \end{itemize}
 
-\section{Conclusões}
-Liste suas conclusões nesta seção, em vez de sim-plesmente relatar o que foi feito.
+Durante a etapa de codificação, o encoder deve analisar qual das transformadas irá gerar melhor compressão e setar uma flag para dizer qual transformada foi utilizada. Com a representação na forma transformada, os valores das componentes de frequência decaem rapidamente, que é o que o mecanismo de zig-zag toma proveito.
 
-\section*{Agradecimentos}
-Mencione aqui seus agradecimentos às agências de fomento e aos colaboradores do trabalho.
+\subsection{Ordenação em zig-zag}
+
+Representando os resíduos na forma transformada, é possível analisar a matriz transformada em ordem de zig-zag, como mostrado em \ref{fig:zigzag}. Dessa forma, vai existir um ponto em que todos os próximos valores serão zero. Nesse ponto, é possível descartar esses valores e guardar somente alguns valores (fazendo assim a efetiva compressão com perdas)
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{zigzag}
+    \caption{Ordenação em zig-zag}
+    \label{fig:zigzag}
+\end{figure}
+
+\subsection{Superblocks}
+
+Para o algoritmo poder comprimir sub-blocos de tamanho dinâmico, foi decidido o conceito de Superblock, que é o maior tamanho de um sub-bloco dentro de um frame, sendo esse tamanho de 64x64. Para as regiões onde há detalhes e que assim não proporciona um ganho na representação transformada do bloco de 64x64, é possível subdividir o Superblock recursivamente até o tamanho de 4x4, seguindo uma ordem bem definida para que intra-prediction fique de forma consistente. Um exemplo de subdivisão do Superblock é mostrado em \ref{fig:superblock}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{superblock}
+    \caption{Exemplo de Superblock}
+    \label{fig:superblock}
+\end{figure}
+
+\subsection{Inter prediction}
+
+Um aspecto que ainda não havia sido abordado é a fonte de maior compressão em vídeos: similaridades entre os frames. Inter prediction é justamente o aproveitamento de informação pra determinação de pixels em um frame utilizando informações de outros frames já decodificados. Todo bloco que o VP9 decodifica pode ser ou do modo intra-prediction ou inter-prediction. 
+
+No modo inter-prediction, o a informação que é guardada no bloco é o \textit{motion vector}, um par x e y de offset no frame já decodificado para ser utilizado nesse bloco, e o índice que identifica qual frame já decodificado deve ser utilizado. É especificado que o decodificador deve manter um buffer com 8 frames decodificados.
+
+\subsection{Tiles}
+
+Um problema na organização do Superblock é necessidade de os sub-blocos serem decodificados de forma sequencial devido ao modo intra-prediction. Para isolar partes independentes dentros de um frame, foi-se criado o conceito de Tile.
+
+Um Tile contém múltiplos superblocks, logo deve ter dimensões múltiplas de 64. Além disso, os pixels de tiles diferentes são independentes durante intra-prediction. Isso significa que um sub-bloco de um SuperBlock de um tile não precisa esperar por outro sub-bloco dentro de outro tile ser decodificado.
+
+Um exemplo de organização de Tiles é mostrado em \ref{fig:tiles}. Nessa figura, temos os tiles de 0 a 7, onde o Tile 1 contém os Superblocks a-h.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{tiles}
+    \caption{Exemplo de Tiles}
+    \label{fig:tiles}
+\end{figure}
+
+\subsection{Loop filtering}
+
+Um efeito que surge da compressão com perdas são os efeitos borda devido ao erro de cropping das representações transformadas. Por exemplo, em \ref{fig:lf_before}, percebemos que há um grande salto dos valores da matriz 4x4 da esquerda para a da direita.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{loopfiltering_before}
+    \caption{Subframes decodificados antes do Loop filtering}
+    \label{fig:lf_before}
+\end{figure}
+
+Para contornar isso, o VP9 previu o conceito de Loop filtering, que é basicamente uma flag a ser setada durante a codificação para determinar se na fronteira dos blocos deve ser passado um filtro de smoothing para reduzir o efeito de falso contorno. Aplicando Loop filtering em \ref{fig:lf_before}, obteriamos como resultado \ref{fig:lf_after}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{loopfiltering_after}
+    \caption{Subframes decodificados depois do Loop filtering}
+    \label{fig:lf_after}
+\end{figure}
+
+\section{Decodificação em hardware}
+
+Para decodifição em hardware, alguns aspectos já mostrado nas técnicas abordadas nesse relatório são úteis para a paralelização:
+
+\begin{itemize}
+  \item As transformadas operam em matrizes de tamanhos pré-determinados. Dessa forma, é possível implementar hard-codec a expressão completa das transformadas, para calcular em poucos ciclos de clock a representação transformada (e a transformada inversa no decodificador). Em FPGA, é possível colocar todo espaço de silício sobrando para múltiplas Unidades Aritiméticas poderem ser utilizadas no cálculo dessas transformações.
+  \item Como mostrado, os Tiles são independentes entre si. Dessa forma, o design de hardware para um tile pode ser replicado várias vezes para que múltiplos tiles possam ser decodificados em paralelo.
+\end{itemize} 
+
+\section{Trabalhos futuros}
+
+Como trabalho futuro, existe a possibilidade de integrar esse codec para streaming adaptativos WebM-DASH. Inicialmente o plano era implementar em hardware, porém durante o projeto de verificou que a Google já possui tal implementação, e disponibiliza de graça para os parceiros fabricantes de chipset \cite{vp9hardware}.
+
+Uma sugestão dada pelo professor é a de explorar codecs de aúdio para embutir meta-informação de paisagens e assim fazer um player que mostre fotos ou vídeos durante a reprodução da música, assim como propagandas.
+
+% Este texto serve de guia de utilização do estilo \SBATeX para
+% \LaTeXe. Com este estilo é possível gerar artigos no formato utilizado pelo \emph{Congresso
+%   Brasileiro de Automática} e \emph{Simpósio Brasileiro de Automação Inteligente} na produção das versões acabadas dos artigos
+%   nos anais.
+% 
+% 
+% O nome entre parênteses governa o tipo de documento a ser gerado. Este
+% parâmetro deve ser passado (entre colchetes) como argumento do comando
+% \verb+\documentclass+, que deve ser o primeiro comando a aparecer no
+% artigo. Por exemplo, o comando
+% \begin{verbatim}
+%   \documentclass[conference]{sbatex}
+% \end{verbatim}
+% é utilizado no início deste arquivo para geração do formato final
+% para o \emph{Congresso Brasileiro de Automática} e o
+% \emph{Simpósio Brasileiro de Automação Inteligente}.
+% 
+% Pode-se adicionar ao comando \verb+\documentclass+ as seguintes
+% opções:
+% \begin{itemize}
+%   \item \verb+submission+: quando em combinação com a opção
+%   \verb+journal+ produz uma versão adequada para proposição à
+%   \emph{Revista da Sociedade Brasileira de Automática}. É ignorada se em
+%   conjunto opção \verb+conference+.
+% 
+%   \item \verb+harvard+: inclui o pacote \verb+harvard+, utilizado para
+%   produção das referências bibliográficas. Pode ser usado em conjunto
+%   com qualquer das outras opções. Veja seção~\ref{sec:bibliografia}.
+% \end{itemize}
+% Por exemplo, para propor um artigo ao congresso e utilizar o pacote de
+% referências bibliográficas \verb+harvard+ usa-se o comando
+% \begin{verbatim}
+%   \documentclass[conference,harvard]{sbatex}
+% \end{verbatim}
+% A ordem dos parâmetros não é relevante.
+% 
+% Os seguintes \emph{pacotes} \LaTeX\ estão disponíveis
+% automaticamente\footnote{Isto também significa que \emph{é necessário
+% ter estes pacotes instalados} para que se possa utilizar o estilo
+% \SBATeX.} com o estilo \SBATeX:
+% \begin{itemize}
+% \item \verb+ifthen+: pacote com comandos de controle de fluxo do tipo
+% `if', `then' e `else'; utilizado internamente para controle das opções de
+% formatação.
+% \item \verb+fancyhdr+: pacote para formatação dos cabeçalhos e rodapés.
+% \item \verb+babel+: pacote para escrita em múltiplos idiomas; os
+% idiomas/dialetos \verb+english+, \verb+brazil+ e \verb+spanish+ já
+% estão habilitados.
+% \item \verb+theorem+: pacote para controle dos ambientes \verb+theorem+,
+% \verb+lemma+, \verb+corollary+ e \verb+proof+.
+% \item \verb+geometry+: pacote para controle da dimensões do texto na página.
+% \item \verb+latexsym+: pacote com símbolos extras do \LaTeXe.
+% \end{itemize}
+% A opção \verb+journal+ provê o pacote:
+% \begin{itemize}
+% \item \verb+times+: pacote para utilização das fontes \verb+times+.
+% \end{itemize}
+% A opção \verb+submission+ provê o pacote:
+% \begin{itemize}
+% \item \verb+setspace+: pacote para controle de espaçamento duplo entre
+% linhas.
+% \end{itemize}
+% E a opção \verb+harvard+ provê o pacote:
+% \begin{itemize}
+% \item \verb+harvard+: pacote para formatação das referências
+% bibliográficas.
+% \end{itemize}
+% 
+% Não é necessário incluir explicitamente as cláusulas
+% \verb+\usepackage+ correpondentes a estes pacotes no artigo para que
+% se possa utilizá-los. Caso a instalação do \LaTeX\ não contenha alguns
+% destes pacotes, consulte a página
+% \begin{verbatim}
+%   http://www.ctan.org
+% \end{verbatim}
+% 
+% Caso o artigo seja em português ou espanhol, recomenda-se a utilização
+% dos pacotes \verb+inputenc+ e \verb+fontenc+ em conjunto com a opção
+% \verb+journal+ na forma
+% \begin{verbatim}
+%   \usepackage[latin1]{inputenc}
+%   \usepackage[T1]{fontenc}
+% \end{verbatim}
+% O pacote \verb+inputenc+ com a opção \verb+latin1+ permite que se
+% escreva o texto com acentos (e.g. \verb+nação+), no formato
+% ISO-8859-1, ao invés de se utilizar a acentuação no formato \TeX
+% (e.g. \verb+na\c{c}\~{a}o+). O pacote \verb+fontenc+ com a opção
+% \verb+T1+ faz com que o LaTeX hifenize melhor palavras em português ou
+% espanhol.
+% 
+% Com a opção \verb+conference+, e devido à escolha de um conjunto de
+% fontes diferentes, recomenda-se subsituir o pacote \verb+fontenc+ pelo
+% pacote \verb+ae+ (\emph{Almost European Computer Modern}), o que pode
+% ser feito com o comando
+% \begin{verbatim}
+%   \usepackage{ae}
+% \end{verbatim}
+% Neste caso não é necessário adicionar explicitamente o pacote
+% \verb+fontenc+, que já é carregado automaticamente pelo pacote
+% \verb+ae+. Veja também a seção~\ref{sec:esqueleto}.
+% 
+% Após o preâmbulo, inicia-se o texto propriamente dito por meio do
+% comando
+% \begin{verbatim}
+%   \begin{document}
+% \end{verbatim}
+% O passo seguinte é a declaração do título do artigo, autores e
+% afiliações.
+% 
+% \subsection{Título, autores e afiliações}
+% 
+% O título do artigo é declarado por meio do comando \verb+\title+. Por
+% exemplo, o título deste artigo foi gerado com o comado:
+% \begin{verbatim}
+%   \title{Artigo Exemplo}
+% \end{verbatim}
+% O título não deve conter agradecimentos, os quais devem aparecer em
+% uma seção separada, no final do artigo.
+% 
+% Em seguida, definem-se os autores com seus endereços eletrônicos e
+% afiliações por meio dos comandos \verb+\author+ e
+% \verb+\address+. Por exemplo, o nome e endereço do primeiro autor
+% deste artigo, João da Silva, é introduzido por meio dos comandos:
+% \begin{verbatim}
+%   \author{João da Silva}
+%          {jsilva@silva.com}
+%   \address{Endereço do João e da Maria\\
+%            Em algum lugar\\
+%            Cidade, Estado, País}
+% \end{verbatim}
+% Note-se que o comando \verb+\author+ requer dois argumentos: o nome e
+% o endereço eletrônico. Quebras de linha podem ser obtidas na afiliação
+% por meio do comando~\verb+\\+. Segue-se, neste exemplo, a declaração
+% do nome e afiliação do segundo autor:
+% \begin{verbatim}
+%   \author{Joaquim Pereira}
+%          {jpereira@pereira.org}
+%   \address{Endereço do Joaquim\\
+%            Em algum lugar\\
+%            Cidade, Estado, País}
+% \end{verbatim}
+% 
+% Em geral, para cada comando \verb+\author+ deve haver um comando
+% \verb+\address+ correspondente, salvo o caso de compartilhamento
+% de endereços. Neste caso, omite-se o comando \verb+\address+ para
+% o segundo autor e indica-se o número do endereço que se deseja
+% compartilhar como um parâmetro adicional do comando
+% \verb+\author+. Por exemplo, o comando:
+% \begin{verbatim}
+%   \author[1]{Maria da Silva}
+%             {maria@pereira.org}
+% \end{verbatim}
+% indica que a Maria da Silva utilizará o endereço de número 1, que
+% corresponde ao endereço de João da Silva.
+% 
+% Os autores seguintes possuem endereços independentes e são
+% introduzidos da maneira convencional:
+% \begin{verbatim}
+%   \author{Pedro Manoel}
+%          {pedro@pedro.com}
+%   \address{Endereço do Pedro e do Rafael\\
+%            Em algum lugar\\
+%            Cidade, Estado, País}
+% 
+%   \author{José Rodrigues}
+%          {jose@rodrigues}
+%   \address{Endereço do José\\
+%            Em algum lugar\\
+%            Cidade, Estado, País}
+% \end{verbatim}
+% 
+% Finalmente, o autor Rafael é definido como
+% \begin{verbatim}
+%   \author[3]{Rafael Pires}
+%             {rafael@pires}
+% \end{verbatim}
+% o que indica que Rafael compartilha o endereço de número 3 com Pedro
+% Manoel. Lembre-se de que, apesar de Pedro Manoel ser o autor de número
+% 4, o seu endereço é o de número 3, uma vez que a Maria já compartilha
+% -- sem segundas intenções -- do mesmo endereço com o João.
+% 
+% O comando
+% \begin{verbatim}
+%   \maketitle
+% \end{verbatim}
+% coloca o título e os autores no formato adequado.
+% 
+% 
+% \subsection{Resumo, abstract e palavras-chave}
+% 
+% Os artigos devem conter um resumo em português (ou espanhol) e em
+% inglês. O ambiente para definição dos resumos, em qualquer idioma, é o
+% \verb+abstract+. Para diferenciar os idiomas utiliza-se o comando
+% \verb+\selectlanguage+, do pacote \verb+babel+. Por exemplo, a seqüência
+% de comandos produz um \emph{Abstract} seguido de um \emph{Resumo}:
+% \begin{verbatim}
+%   \selectlanguage{english}
+%   \begin{abstract}
+%     Yossarian says, ...
+%   \end{abstract}
+% 
+%   \selectlanguage{brazil}
+%   \begin{abstract}
+%     O Largo da Sé ...
+%   \end{abstract}
+% \end{verbatim}
+% 
+% As \emph{palavras-chave} devem ser definidas por meio do comando:
+% \begin{verbatim}
+%   \keywords{Exemplo, Ilustração}
+% \end{verbatim}
+% 
+% Deste ponto em diante selecione o idioma a ser utilizado e
+% inicie o texto da sua contribuição.
+% 
+% \textbf{IMPORTANTE:} Caso esteja se produzindo um texto com a
+% opção \verb+conference+, colocam-se os comandos que vão de
+% \verb+\maketitle+ a \verb+\keywords+ dentro de um ambiente
+% \verb+twocolumn+. Isto é necessário para que os resumos sejam
+% formatados em coluna simples\footnote{Como este arquivo está
+% adaptado para utilizar o formato adequado para o \emph{Congresso
+% Brasileiro de Automática} e o \emph{Simpósio Brasileiro de
+% Automação Inteligente}, isto já está feito}. Veja
+% seção~\ref{sec:esqueleto}.
+% 
+% 
+% \subsection{Teoremas, lemas, corolários e provas}
+% 
+% Quatro ambientes já se encontram pré-definidos no estilo \SBATeX. São
+% eles
+% \begin{itemize}
+% \item \verb+theorem+: ambiente para teoremas.
+% \item \verb+corollary+: ambiente para corolários.
+% \item \verb+lemma+: ambiente para lemas.
+% \item \verb+proof+: ambiente para provas.
+% \end{itemize}
+% Segue-se um exemplo de utilização destes ambientes:
+% \begin{lemma}[Desigualdade Subtrativa]
+% Em um espaço vetorial linear normado $\|x\| - \|y\| \leq \|x - y\|$
+% para quaisquer vetores $x$, $y$.
+% \end{lemma}
+% \begin{proof}
+% \begin{align*}
+% \|x\| - \|y\| &= \|x - y + y\| - \|y\| \ \\
+%               &\leq \|x - y \| + \|y\| - \|y\| \\
+%               &= \|x - y\|.
+% \end{align*}
+% \end{proof}
+% Este lema é produzido pela seguinte seqüencia de comandos:
+% \begin{verbatim}
+%   \begin{lemma}[Desigualdade Subtrativa]
+%     Em um espaço vetorial linear ...
+%   \end{lemma}
+%   \begin{proof}
+%     ...
+%   \end{proof}
+% \end{verbatim}
+% 
+% Estes ambientes, com exceção do ambiente \verb+proof+, aceitam
+% um parâmetro opcional que define um nome. No exemplo acima, o nome
+% \emph{Desigualdade Subtrativa} foi produzido por meio deste argumento.
+% 
+% 
+% \subsection{Bibliografia}
+% \label{sec:bibliografia}
+% 
+% As referências são reunidas ao fim do manuscrito, arranjadas
+% alfabeticamente pelo primeiro autor e cronologicamente para cada
+% autor.
+% 
+% \textbf{IMPORTANTE:} Todas referências citadas devem aparecer em algum
+% outro ponto do texto.
+% 
+% As citações seguem um estilo autor/ano (o mesmo
+% usado na revista {\em Automatica}). O pacote \verb+harvard+ (já
+% incluído pelo \SBATeX) provê vários comandos para inclusão de
+% citações. Dois dois mais utilizados são o tradicional \verb+\cite+ e o
+% \verb+\citeasnoun+. Veja um exemplo:
+% \begin{verbatim}
+%   O resumo deste artigo é um trecho do
+%   livro~\citeasnoun{serafim}. Já o abstract é
+%   extraído de~\citeasnoun{catch22}.
+%   Informações sobre o estilo bibliográfico
+%   \verb+harvard+ encontram-se
+%   em~\citeasnoun{harvard}. Os interessados
+%   devem consultar referências adicionais
+%   sobre \LaTeX~\cite{latex,%
+%   latex:guide,latex:companion}.
+% \end{verbatim}
+% produz o trecho:
+% 
+% \begin{em}
+%   O resumo deste artigo é um trecho do
+%   livro~\citeasnoun{serafim}. Já o abstract é
+%   extraído de~\citeasnoun{vp9spec}.
+%   Informações sobre o estilo bibliográfico
+%   \verb+harvard+ encontram-se
+%   em~\citeasnoun{harvard}. Os interessados
+%   devem consultar referências adicionais
+%   sobre \LaTeX~\cite{latex,latex:guide,latex:companion}.
+% \end{em}
+% 
+% Recomenda-se a utilização o programa BibTeX para gerar as suas
+% referências~\cite{latex,latex:guide,latex:companion}. Note-se que
+% não é necessário definir o estilo bibliográfico com o comando
+% \verb+\bibliographystyle+, pois o mesmo é definido automaticamente
+% pelo estilo \SBATeX. Basta incluir o arquivo de bibliografias,
+% neste exemplo o artigo \verb+exemplo.bib+ por meio do comando.
+% \begin{verbatim}
+%     ...
+% 
+%     \bibliography{exemplo}
+% 
+%   \end{document}
+% \end{verbatim}
+% Note-se que este comando deve ser colocado logo antes do
+% encerramento do artigo, o que é feito pelo comando
+% \verb+\end{document}+, de tal forma a garantir que a bibliografia
+% seja o último item do artigo.
+% 
+% 
+% \subsection{Esqueleto deste arquivo no formato \SBATeX}
+% \label{sec:esqueleto}
+% 
+% Este arquivo, adaptado para gerar o formato adequado para o
+% \emph{Congresso Brasileiro de Automática} e o  \emph{Simpósio
+% Brasileiro de Automação Inteligente}, faz uso da seguintes
+% instruções:
+% \begin{verbatim}
+%   \documentclass[conference,harvard,brazil,english]{sbatex}
+%   \usepackage[latin1]{inputenc}
+%   \usepackage{ae}
+% 
+%     ...
+% 
+%     \twocolumn[
+%       \maketitle
+% 
+%       \selectlanguage{english}
+%       \begin{abstract}
+%         Yossarian says, ...
+%       \end{abstract}
+% 
+%       \selectlanguage{brazil}
+%       \begin{abstract}
+%         O Largo da Sé ...
+%       \end{abstract}
+% 
+%       \keywords{Exemplo, Ilustração}
+%     ]
+% 
+%     ...
+% \end{verbatim}
+% 
+% Caso a opção \verb+journal+ seja utilizada, remova o comando
+% \verb+twocolumn[+ antes do comando \verb+\maketitle+ e o \verb+]+ depois do
+% comando \verb+\keywords+. Nos textos em português ou espanhol substitua o pacote \verb+ae+ pelo
+% pacote \verb+fontenc+ com a opção \verb+T1+. Os trechos modificado são os
+% seguintes:
+% \begin{verbatim}
+%   \documentclass[journal,harvard,brazil,english]{sbatex}
+%   \usepackage[latin1]{inputenc}
+%   \usepackage[T1]{fontenc}
+% 
+%   \begin{document}
+% 
+%     \title{Artigo Exemplo}
+% 
+%     \author{João da Silva}
+%            {jsilva@silva.com}
+%     \address{Endereço do João e da Maria\\
+%              Em algum lugar\\
+%              Cidade, Estado, País}
+% 
+%     \author{Joaquim Pereira}
+%            {jpereira@pereira.org}
+%     \address{Endereço do Joaquim\\
+%              Em algum lugar\\
+%              Cidade, Estado, País}
+% 
+%     \author[1]{Maria da Silva}
+%               {maria@pereira.org}
+% 
+%     \author{Pedro Manoel}
+%            {pedro@pedro.com}
+%     \address{Endereço do Pedro e do Rafael\\
+%              Em algum lugar\\
+%              Cidade, Estado, País}
+% 
+%     \author{José Rodrigues}
+%            {jose@rodrigues}
+%     \address{Endereço do José\\
+%              Em algum lugar\\
+%              Cidade, Estado, País}
+% 
+%     \author[3]{Rafael Pires}
+%               {rafael@pires}
+% 
+%     \maketitle
+% 
+%     \selectlanguage{english}
+%     \begin{abstract}
+%       Yossarian says, ...
+%     \end{abstract}
+% 
+%     \selectlanguage{brazil}
+%     \begin{abstract}
+%       O Largo da Sé ...
+%     \end{abstract}
+% 
+%     \keywords{Exemplo, Ilustração}
+% 
+%     ...
+% 
+%     \bibliography{exemplo}
+% 
+%   \end{document}
+% \end{verbatim}
+% 
+% 
+% \section{Como processar este arquivo sem um aplicativo LaTeX}
+% 
+% Para processar este arquivo via linha de comandos utiliza-se a
+% sequência de comandos:
+% \begin{verbatim}
+%   latex cba
+%   bibtex cba
+%   latex cba
+%   latex cba
+% \end{verbatim}
+% Estes comandos geram um arquivo do tipo \emph{Device Independent}
+% (\verb+cba.dvi+), que pode ser visualizado em programas como o
+% \verb+xdvi+ ou \verb+yap+.
+% 
+% 
+% Para gerar um arquivo no formato \emph{Portable Document Format}
+% (\verb+cba.pdf+) utilize os comandos:
+% \begin{verbatim}
+%   dvips -Ppdf -t a4 cba
+%   ps2pdf -dMaxSubsetPct=100 -dSubsetFonts=true
+%          -dEmbedAllFonts=true -dCompatibilityLevel=1.2
+%           -sPAPERSIZE=a4 cba.ps
+% \end{verbatim}
+% 
+% \textbf{Observação:} Dependendo da sua instalação do \verb+dvips+ o
+% parâmetro \verb+-Ppdf+ pode acarretar a troca de algumas seqüências de
+% letras nos arquivos .ps e .pdf. Um típico exemplo é a troca de toda
+% sílaba `fi' pelo símbolo da libra esterlina. Para evitar este
+% indesejável efeito você deve desabilitar (ou habilitar, dependendo da
+% instalação) o remapeamento de caracteres. Faça isto adicionando à
+% linha de comando do \verb+dvips+ o parâmetro \verb+-G0+ (ou \verb+-G+
+% para habilitar).
+% 
+% \section{Contribuição deste artigo}
+% 
+% \subsection{Os vinte e sete erros mais comuns (de uma lista de cem)}
+% \label{sec:27erros}
+% 
+% Erros gramaticais e ortográficos devem, por princípio, ser
+% evitados. Alguns, no entanto, como ocorrem com maior freqüência,
+% merecem atenção redobrada. O primeiro capítulo deste manual inclui
+% explicações mais completas a respeito de cada um deles. Veja os cem
+% mais comuns do idioma e use esta relação como um roteiro para fugir
+% deles~\cite{manual}.
+% 
+% \begin{enumerate}
+% \item ``Mal cheiro'', ``mau-humorado''. Mal opõe-se a bem e mau, a
+% bom. Assim: mau cheiro (bom cheiro), mal-humorado
+% (bem-humorado). Igualmente: mau humor, mal-intencionado, mau jeito,
+% mal-estar.
+% 
+% \item ``Fazem'' cinco anos. Fazer, quando exprime tempo, é impessoal:
+% Faz cinco anos.~/~Fazia dois séculos.~/~Fez 15 dias.
+% 
+% \item ``Houveram'' muitos acidentes. Haver, como existir, também é
+% invariável: Houve muitos acidentes.~/~Havia muitas pessoas.~/~Deve
+% haver muitos casos iguais.
+% 
+% \item ``Existe'' muitas esperanças. Existir, bastar, faltar, restar e
+% sobrar admitem normalmente o plural: Existem muitas esperanças. /
+% Bastariam dois dias.~/~Faltavam poucas peças.~/~Restaram alguns
+% objetos.~/~Sobravam idéias.
+% 
+% \item Para ``mim'' fazer. Mim não faz, porque não pode ser
+% sujeito. Assim: Para eu fazer, para eu dizer, para eu trazer.
+% 
+% \item Entre ``eu'' e você. Depois de preposição, usa-se mim ou ti: Entre
+% mim e você.~/~Entre eles e ti.
+% 
+% \item ``Há'' dez anos ``atrás''. Há e atrás indicam passado na frase. Use
+% apenas há dez anos ou dez anos atrás.
+% 
+% \item ``Entrar dentro''. O certo: entrar em. Veja outras redundâncias:
+% Sair fora ou para fora, elo de ligação, monopólio exclusivo, já não há
+% mais, ganhar grátis, viúva do falecido.
+% 
+% \item ``Venda à prazo''. Não existe crase antes de palavra masculina, a
+% menos que esteja subentendida a palavra moda: Salto à (moda de) Luís
+% XV. Nos demais casos: A salvo, a bordo, a pé, a esmo, a cavalo, a
+% caráter.
+% 
+% \item ``Porque'' você foi? Sempre que estiver clara ou implícita a
+% palavra razão, use por que separado: Por que (razão) você foi?~/~Não
+% sei por que (razão) ele faltou.~/~Explique por que razão você se
+% atrasou. Porque é usado nas respostas: Ele se atrasou porque o
+% trânsito estava congestionado.
+% 
+% \item Vai assistir ``o'' jogo hoje. Assistir como presenciar exige a:
+% Vai assistir ao jogo, à missa, à sessão.  Outros verbos com a: A
+% medida não agradou (desagradou) à população.~/~Eles obedeceram
+% (desobedeceram) aos avisos.~/~Aspirava ao cargo de diretor.~/~Pagou ao
+% amigo.~/~Respondeu à carta.~/~Sucedeu ao pai.~/~Visava aos estudantes.
+% 
+% \item Preferia ir ``do que'' ficar. Prefere-se sempre uma coisa a outra:
+% Preferia ir a ficar. É preferível segue a mesma norma: É preferível
+% lutar a morrer sem glória.
+% 
+% \item O resultado do jogo, não o abateu. Não se separa com vírgula o
+% sujeito do predicado. Assim: O resultado do jogo não o abateu. Outro
+% erro: O prefeito prometeu, novas denúncias. Não existe o sinal entre o
+% predicado e o complemento: O prefeito prometeu novas denúncias.
+% 
+% \item Não há regra sem ``excessão''. O certo é exceção. Veja outras
+% grafias erradas e, entre parênteses, a forma correta: ``paralizar''
+% (paralisar), ``beneficiente'' (beneficente), ``xuxu'' (chuchu),
+% ``previlégio'' (privilégio), ``vultuoso'' (vultoso), ``cincoenta''
+% (cinqüenta), ``zuar'' (zoar), ``frustado'' (frustrado), ``calcáreo''
+% (calcário), ``advinhar'' (adivinhar), ``benvindo'' (bem-vindo), ``ascenção''
+% (ascensão), ``pixar'' (pichar), ``impecilho'' (empecilho), ``envólucro''
+% (invólucro).
+% 
+% \item Quebrou ``o'' óculos. Concordância no plural: os óculos, meus
+% óculos. Da mesma forma: Meus parabéns, meus pêsames, seus ciúmes,
+% nossas férias, felizes núpcias.
+% 
+% \item Comprei ``ele'' para você. Eu, tu, ele, nós, vós e eles não podem
+% ser objeto direto. Assim: Comprei-o para você. Também: Deixe-os sair,
+% mandou-nos entrar, viu-a, mandou-me.
+% 
+% \item Nunca ``lhe'' vi. Lhe substitui a ele, a eles, a você e a vocês e
+% por isso não pode ser usado com objeto direto: Nunca o vi.~/~Não o
+% convidei.~/~A mulher o deixou.~/~Ela o ama.
+% 
+% \item ``Aluga-se'' casas. O verbo concorda com o sujeito: Alugam-se
+% casas.~/~Fazem-se consertos.~/~É assim que se evitam acidentes. /
+% Compram-se terrenos.~/~Procuram-se empregados.
+% 
+% \item ``Tratam-se'' de. O verbo seguido de preposição não varia nesses
+% casos: Trata-se dos melhores profissionais.~/~Precisa-se de
+% empregados.~/~Apela-se para todos.~/~Conta-se com os amigos.
+% 
+% \item Chegou ``em'' São Paulo. Verbos de movimento exigem a, e não em:
+% Chegou a São Paulo.~/~Vai amanhã ao cinema.~/~Levou os filhos ao
+% circo.
+% 
+% \item Atraso implicará ``em'' punição. Implicar é direto no sentido de
+% acarretar, pressupor: Atraso implicará punição.~/~Promoção implica
+% responsabilidade.
+% 
+% \item Vive ``às custas'' do pai. O certo: Vive à custa do pai. Use
+% também em via de, e não ``em vias de'': Espécie em via de extinção. /
+% Trabalho em via de conclusão.
+% 
+% \item Todos somos ``cidadões''. O plural de cidadão é cidadãos. Veja
+% outros: caracteres (de caráter), juniores, seniores, escrivães,
+% tabeliães, gângsteres.
+% 
+% \item O ingresso é ``gratuíto''. A pronúncia correta é gratúito, assim
+% como circúito, intúito e fortúito (o acento não existe e só indica a
+% letra tônica). Da mesma forma: flúido, condôr, recórde, aváro, ibéro,
+% pólipo.
+% 
+% \item A última ``seção'' de cinema. Seção significa divisão, repartição,
+% e sessão equivale a tempo de uma reunião, função: Seção Eleitoral,
+% Seção de Esportes, seção de brinquedos; sessão de cinema, sessão de
+% pancadas, sessão do Congresso.
+% 
+% \item Vendeu ``uma'' grama de ouro. Grama, peso, é palavra masculina: um
+% grama de ouro, vitamina C de dois gramas. Femininas, por exemplo, são
+% a agravante, a atenuante, a alface, a cal, etc.
+% 
+% \item ``Porisso''. Duas palavras, por isso, como de repente e a partir
+% de.
+% 
+% \end{enumerate}
+% 
+% \subsection{Observação importante}
+% 
+% Os erros de português porventura presentes neste artigo
+% \begin{itemize}
+% \item ou foram introduzidos propositalmente para deleite dos leitores
+% atentos,
+% \item ou não constam da lista da seção~\ref{sec:27erros}.
+% \end{itemize}
+% 
+% \section{Conclusões}
+% Liste suas conclusões nesta seção, em vez de sim-plesmente relatar o que foi feito.
+% 
+% \section*{Agradecimentos}
+% Mencione aqui seus agradecimentos às agências de fomento e aos colaboradores do trabalho.
 
 % BIBLIOGRAFIA
 \bibliography{references}
